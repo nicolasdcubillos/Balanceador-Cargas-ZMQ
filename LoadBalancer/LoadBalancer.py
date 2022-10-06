@@ -1,32 +1,19 @@
-import sys
 import zmq
+import random
+import sys
+import time
 
 port = "5556"
 
 if len(sys.argv) > 1:
-    port = sys.argv[1]
+    port =  sys.argv[1]
     int(port)
-    
-if len(sys.argv) > 2:
-    port1 = sys.argv[2]
-    int(port1)
 
 context = zmq.Context()
-socket = context.socket(zmq.SUB)
-
-host = "tcp://localhost:" + port
-print (f"[!] Iniciando balanceador de carga. \nIniciando conexión al servidor {host}")
-socket.connect(host)
-
-print ("Conexión exitosa.") # TODO: Try catch.
-
-#   Para hacer conexión a más de un publicador
-
-#if len(sys.argv) > 2:
-#    socket.connect ("tcp://localhost:%s" % port1)
-    
-socket.setsockopt(zmq.SUBSCRIBE, b'')
+socket = context.socket(zmq.PUB)
+socket.bind("tcp://*:%s" % port)
 
 while True:
-    response = socket.recv().decode()
-    print(response)
+    message = "Bienvenido desde el balanceador de cargas."
+    socket.send(bytes(message, 'utf-8'))
+    time.sleep(1)
