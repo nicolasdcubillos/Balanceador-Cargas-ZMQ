@@ -1,31 +1,13 @@
-import sys
 import zmq
+import sys
 
-port = "5556"
-
-if len(sys.argv) > 1:
-    port = sys.argv[1]
-    int(port)
-    
-if len(sys.argv) > 2:
-    port1 = sys.argv[2]
-    int(port1)
-
+# ZeroMQ Context
 context = zmq.Context()
-socket = context.socket(zmq.SUB)
 
-host = "tcp://localhost:" + port
-print (f"[!] Bienvenido. Conectando al host {host}")
-socket.connect(host)
-print ("Conexión exitosa.")
+# Define the socket using the "Context"
+sock = context.socket(zmq.REQ)
+sock.connect("tcp://localhost:5555")
 
-#   Para hacer conexión a más de un publicador
-
-#if len(sys.argv) > 2:
-#    socket.connect ("tcp://localhost:%s" % port1)
-    
-socket.setsockopt(zmq.SUBSCRIBE, b'')
-
-while True:
-    response = socket.recv().decode()
-    print(response)
+# Send a "message" using the socket
+sock.send(b"Hola desde cliente.")
+print (sock.recv())
