@@ -12,7 +12,7 @@ contextServerResponse = zmq.Context()
 socketServerResponse = contextServerResponse.socket(zmq.SUB)
 
 for i in range (1, max_servers):
-    socketServerResponse.connect("tcp://127.0.0.1:557" + str(i)) # Por donde recibe las respuestas de los servidores.
+    socketServerResponse.connect("tcp://10.43.100.226:557" + str(i)) # Por donde recibe las respuestas de los servidores.
     
 socketServerResponse.setsockopt(zmq.SUBSCRIBE, b'')
 contextClientResponse = zmq.Context()
@@ -70,7 +70,7 @@ while True:
             if socks.get(socketServerResponse) == zmq.POLLIN:
                 serverResponse = socketServerResponse.recv().decode()
                 serverResponse = tokens[0] + " " + serverResponse
-                socketClientResponse.send(bytes(serverResponse, 'utf-8'))
+                socketClientResponse.send(bytes(serverResponse, "utf-8"))
                 print(f"   Server response: {serverResponse}")
                 Failure = False
         

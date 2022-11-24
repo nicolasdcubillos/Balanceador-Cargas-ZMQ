@@ -12,14 +12,14 @@ portLoadBalancer = "5553"
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
 
-socket.connect("tcp://127.0.0.1:" + portLoadBalancer)
+socket.connect("tcp://10.43.100.220:" + portLoadBalancer)
 
 id = random.randint(100, 999)
 
 contextServerResponse = zmq.Context()
 socketLoadBalancerResponse = contextServerResponse.socket(zmq.SUB)
-socketLoadBalancerResponse.connect("tcp://127.0.0.1:5590") # Por donde recibe las respuestas de los servidores.
-socketLoadBalancerResponse.setsockopt(zmq.SUBSCRIBE, b'')
+socketLoadBalancerResponse.connect("tcp://10.43.100.220:5590") # Por donde recibe las respuestas de los servidores.
+socketLoadBalancerResponse.setsockopt(zmq.SUBSCRIBE, bytes(str(id), "utf-8"))
 
 poller = zmq.Poller()
 poller.register(socketLoadBalancerResponse, zmq.POLLIN)
@@ -41,8 +41,10 @@ def processResponse(request, response):
             
     elif request == "Stock":
         stock = ""
-        for item in range(1, len(response) - 1):
-            stock += "ID: " + str(item) + " | " + response[item] + " - " + " Quantity: " + response[item + 1] + "\n"
+        item = 1
+        while item < len(response) - 1:
+            stock += "ID: " + str(item) + " | " + response[item] + " | Quantity: " + response[item + 2] + "\n"
+            item = item + 3
         return stock
             
     elif request == "Buy":

@@ -14,7 +14,7 @@ socketResponse.bind("tcp://*:%s" % responsePort)
 
 contextLB = zmq.Context()
 socketLoadBalancer = contextLB.socket(zmq.SUB)
-loadBalancerHost = "tcp://localhost:5561"
+loadBalancerHost = "tcp://10.43.100.220:5561"
 socketLoadBalancer.connect(loadBalancerHost)
 
 print("Conexión exitosa.")
@@ -25,14 +25,17 @@ socketLoadBalancer.setsockopt(zmq.SUBSCRIBE, bytes(sys.argv[1], "utf-8"))
 
 
 def Create(username, password):
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
-    cursor = cnx.cursor()
-    sql = "INSERT into User(username, password, salt) VALUES (%s, %s, %s)"
-    val = (username, hashed, salt)
-    cursor.execute(sql, val)
-    cnx.commit()
-    return "create_successfull"
+   try:
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+        cursor = cnx.cursor()
+        sql = "INSERT into User(username, password, salt) VALUES (%s, %s, %s)"
+        val = (username, hashed, salt)
+        cursor.execute(sql, val)
+        cnx.commit()
+        return "create_successfull"
+   except:
+        return "error"
 
 
 def Login (username, password):
