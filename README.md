@@ -1,18 +1,23 @@
-# Balanceador-Cargas-ZMQ
-Balanceador de Cargas. Sistema distribuido, desarrollado sobre Python utilizando el framework ZeroMQ para la comunicación entre máquinas.
+# Load-Balancer-Store
+Load Balancer using Round Robin algorithm. Distributed system, developed on Python using the ZeroMQ framework with the Pub/Sub pattern.
 
-## Instalación
+Store simulation with persistence in MYSQL database. n clients can make requests, which will be balanced by the load balancer and finally distributed to n servers, which will serve the clients requests.
+
+## Instalation
 
 ```bash
 pip3 install pyzmq
 ```
 
-## Ejecución
+## Execution
 
 ```bash
-python ./LoadBalancer/LoadBalancer.py
-python ./Server/Server.py
-python ./Client/Client.py
+python Server.py 1
+python Server.py 2
+python Server.py 3
+python Server.py 4
+python LoadBalancer.py
+python Client.py
 ```
 
 ## Licencia
