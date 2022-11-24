@@ -42,7 +42,7 @@ def processResponse(request, response):
     elif request == "Stock":
         stock = ""
         for item in range(1, len(response) - 1):
-            stock += "ID: " + item + " | " + response[item] + " - " + " Quantity: " + response[item + 1] + "\n"
+            stock += "ID: " + str(item) + " | " + response[item] + " - " + " Quantity: " + response[item + 1] + "\n"
         return stock
             
     elif request == "Buy":
@@ -99,6 +99,7 @@ while True:
         
     elif option == "C":
         logged = False
+        continue
     
     #print(f"Petición '{request}' enviada al servidor.")
     socket.send(b"%d %s" % (id, bytes(request, 'utf-8')))
@@ -119,4 +120,3 @@ while True:
         print(f"   -> {processResponse(typeRequest, response)}")
     
     input("\nPress enter to continue...")
-    
