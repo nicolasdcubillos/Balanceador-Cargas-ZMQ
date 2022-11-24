@@ -6,15 +6,15 @@ socketServers = contextPub.socket(zmq.PUB)
 publisherPort = "5561"
 socketServers.bind("tcp://*:%s" % publisherPort)
 
+max_servers = 5
+
 contextServerResponse = zmq.Context()
 socketServerResponse = contextServerResponse.socket(zmq.SUB)
-socketServerResponse.connect("tcp://127.0.0.1:5571") # Por donde recibe las respuestas de los servidores.
-socketServerResponse.connect("tcp://127.0.0.1:5572") # Por donde recibe las respuestas de los servidores.
-socketServerResponse.connect("tcp://127.0.0.1:5573") # Por donde recibe las respuestas de los servidores.
-socketServerResponse.connect("tcp://127.0.0.1:5574") # Por donde recibe las respuestas de los servidores.
-socketServerResponse.connect("tcp://127.0.0.1:5575") # Por donde recibe las respuestas de los servidores.
-socketServerResponse.setsockopt(zmq.SUBSCRIBE, b'')
 
+for i in range (1, max_servers):
+    socketServerResponse.connect("tcp://127.0.0.1:557" + str(i)) # Por donde recibe las respuestas de los servidores.
+    
+socketServerResponse.setsockopt(zmq.SUBSCRIBE, b'')
 contextClientResponse = zmq.Context()
 socketClientResponse = contextPub.socket(zmq.PUB)
 portClientResponse = "5590"
@@ -31,7 +31,6 @@ socketClients.bind("tcp://*:%s" % port)
 socketClients.setsockopt(zmq.SUBSCRIBE, b'')
 
 current = 0
-max_servers = 3
 
 def RoundRobin():
     global current
@@ -39,6 +38,8 @@ def RoundRobin():
     if current == max_servers + 1:
         current = 1
     return current
+
+print(f"Load Balancer started at port {publisherPort}.\n\n")
 
 while True:
     tokens = socketClients.recv().decode().split()

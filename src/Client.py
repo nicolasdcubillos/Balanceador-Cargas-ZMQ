@@ -25,8 +25,10 @@ poller = zmq.Poller()
 poller.register(socketLoadBalancerResponse, zmq.POLLIN)
 
 def processResponse(request, response):
+    global logged
     if request == "Login":
         if response[1] == "auth_successfull":
+            logged = True
             return ("Auth successfully. Welcome to the store!")
         else:
             return ("Credentials error. Check the input data again.")
@@ -39,8 +41,8 @@ def processResponse(request, response):
             
     elif request == "Stock":
         stock = ""
-        for item in range(1, len(response)):
-            stock += item + response[item] + "\n"
+        for item in range(1, len(response) - 1):
+            stock += "ID: " + item + " | " + response[item] + " - " + " Quantity: " + response[item + 1] + "\n"
         return stock
             
     elif request == "Buy":
@@ -91,16 +93,17 @@ while True:
         
     elif option == "B":
         typeRequest = "Buy"
-        request = typeRequest
-        productId = input("Product ID: ")
+        productName = input("Product name: ")
+        quantity = input("Quantity: ")
+        request = typeRequest + " " + productName + " " + quantity
         
     elif option == "C":
         logged = False
     
-    print(f"Petición '{request}' enviada al servidor.")
+    #print(f"Petición '{request}' enviada al servidor.")
     socket.send(b"%d %s" % (id, bytes(request, 'utf-8')))
     
-    socks = dict(poller.poll(50000))
+    socks = dict(poller.poll(30000))
     
     Failure = True
     
